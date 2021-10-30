@@ -17,9 +17,10 @@ var uploadFile = multer({
         s3: s3,
         bucket: process.env.S3BUCKET,
         contentType: multerS3.AUTO_CONTENT_TYPE,
+        contentDisposition: 'inline',
         key: function (req, file, cb) {
             const fileName = `${uuidv4()}${file.originalname.toLowerCase().split(' ').join('-')}`;
-            cb(null, `app/files/${fileName}`);
+            cb(null, `app/files/${fileName}.ogg`);
         }
     })
 });

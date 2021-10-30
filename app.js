@@ -26,6 +26,7 @@ aws.config.update({
 
 var s3 = new aws.S3();
 
+
 app.put('/upload', uploadFile.single('audio'), async (req, res, next) => {
     try {
         const { key } = req.file;
@@ -33,19 +34,19 @@ app.put('/upload', uploadFile.single('audio'), async (req, res, next) => {
         let url = s3.getSignedUrl('getObject', {
             Bucket: process.env.S3BUCKET,
             Key: key,
-            Expires: 604800
+            Expires: 604800,
         });
 
         return res.send(url);
     } catch(e) { 
+        console.log(e.message)
         res.json({ error: e.message });
      }
 });
 
 
-/*
-//let baseUrl = "http://localhost"
-let baseUrl = 'https://demo-fiverr.herokuapp.com';
+/*let baseUrl = "http://localhost"
+//let baseUrl = 'https://demo-fiverr.herokuapp.com';
 
 app.put('/upload', uploadFile.single('audio'), async (req, res, next) => {
     try {
@@ -55,9 +56,9 @@ app.put('/upload', uploadFile.single('audio'), async (req, res, next) => {
     } catch(e) { 
         res.json({ error: e.message });
      }
-});
+});*/
 
-app.get('/app/files/:key', uploadFile.single('audio'), async (req, res, next) => {
+/*app.get('/app/files/:key', uploadFile.single('audio'), async (req, res, next) => {
     try {
         const { key } = req.params;
 
