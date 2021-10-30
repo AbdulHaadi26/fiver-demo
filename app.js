@@ -27,21 +27,35 @@ aws.config.update({
 var s3 = new aws.S3();
 
 
+//let baseUrl = "http://localhost:3000"
+let baseUrl = 'https://recorder-4dc0e.web.app';
+
 app.put('/upload', uploadFile.single('audio'), async (req, res, next) => {
     try {
         const { key } = req.file;
 
+        return res.send(`${baseUrl}/recording/${key}`);
+    } catch (e) {
+        console.log(e.message)
+        res.json({ error: e.message });
+    }
+});
+
+app.get('/file/:key', async (req, res, next) => {
+    try {
+        const { key } = req.params;
+
         let url = s3.getSignedUrl('getObject', {
             Bucket: process.env.S3BUCKET,
-            Key: key,
+            Key: `app/files/${key}`,
             Expires: 604800,
         });
 
         return res.send(url);
-    } catch(e) { 
+    } catch (e) {
         console.log(e.message)
         res.json({ error: e.message });
-     }
+    }
 });
 
 
