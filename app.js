@@ -26,17 +26,37 @@ aws.config.update({
 
 var s3 = new aws.S3();
 
+//let baseUrl = "http://localhost"
+let baseUrl = 'https://demo-fiverr.herokuapp.com';
+
 app.put('/upload', uploadFile.single('audio'), async (req, res, next) => {
     try {
         const { key } = req.file;
 
-        let url = s3.getSignedUrl('getObject', {
-            Bucket: process.env.S3BUCKET,
-            Key: key,
-            Expires: 604800
-        });
+        return res.send(`${baseUrl}/${key}`);
+    } catch(e) { 
+        res.json({ error: e.message });
+     }
+});
 
-        return res.send(url);
+app.get('/app/files/:key', uploadFile.single('audio'), async (req, res, next) => {
+    try {
+        const { key } = req.params;
+
+        let params = {
+            Bucket: process.env.S3BUCKET,
+            Key: `app/files/${key}`
+        };
+
+        s3.getObject(params, function (err, data) {
+            if (err) {
+                return res.send({ "error": err });
+            }
+            res.attachment('audio-recording');
+            res.type(data.ContentType); 
+            res.set('content-disposition','inline');
+            res.send(data.Body);    
+        });
     } catch(e) { 
         res.json({ error: e.message });
      }
@@ -48,6 +68,6 @@ function shouldCompress(req, res) {
     return compression.filter(req, res);
 }
 
-http.createServer(app).listen(process.env.PORT);
+http.createServer(app).listen(80);
 
 
