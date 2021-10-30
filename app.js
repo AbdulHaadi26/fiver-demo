@@ -85,6 +85,6 @@ function shouldCompress(req, res) {
     return compression.filter(req, res);
 }
 
-http.createServer(app).listen(80);
+http.createServer(app).listen(process.env.PORT);
 
 
