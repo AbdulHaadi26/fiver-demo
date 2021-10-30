@@ -21,11 +21,29 @@ const { uploadFile } = require('./multers3');
 aws.config.update({
     secretAccessKey: process.env.S3SECRET,
     accessKeyId: process.env.S3ID,
-    region: 'us-east-2'
+    region: 'us-east-2',
 });
 
 var s3 = new aws.S3();
 
+app.put('/upload', uploadFile.single('audio'), async (req, res, next) => {
+    try {
+        const { key } = req.file;
+
+        let url = s3.getSignedUrl('getObject', {
+            Bucket: process.env.S3BUCKET,
+            Key: key,
+            Expires: 604800
+        });
+
+        return res.send(url);
+    } catch(e) { 
+        res.json({ error: e.message });
+     }
+});
+
+
+/*
 //let baseUrl = "http://localhost"
 let baseUrl = 'https://demo-fiverr.herokuapp.com';
 
@@ -60,14 +78,13 @@ app.get('/app/files/:key', uploadFile.single('audio'), async (req, res, next) =>
     } catch(e) { 
         res.json({ error: e.message });
      }
-});
-
+});*/
 
 function shouldCompress(req, res) {
     if (req.headers["x-no-compression"]) return false;
     return compression.filter(req, res);
 }
 
-http.createServer(app).listen(process.env.PORT);
+http.createServer(app).listen(80);
 
 
