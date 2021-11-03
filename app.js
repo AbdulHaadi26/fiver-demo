@@ -47,7 +47,7 @@ app.get('/file/:key', async (req, res, next) => {
 
         let url = s3.getSignedUrl('getObject', {
             Bucket: process.env.S3BUCKET,
-            Key: `app/files/${key}`,
+            Key: `${key}`,
             Expires: 604800,
         });
 
