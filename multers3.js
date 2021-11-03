@@ -19,7 +19,7 @@ var uploadFile = multer({
         contentType: multerS3.AUTO_CONTENT_TYPE,
         contentDisposition: 'inline',
         key: function (req, file, cb) {
-           cb(null, Date.now() + path.extname(file.originalname))
+           cb(null, Date.now() + require('path').extname(file.originalname))
         }
     })
 });
